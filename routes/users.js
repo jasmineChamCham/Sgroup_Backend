@@ -1,18 +1,8 @@
 const express = require('express');
 const connection = require('../database/connection')
-const fs = require('fs');
 const userRouter = express.Router()
 
 function validateUser(req, res, next) {
-    // const regexSpecial = /^[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$/g
-    // const regexNumber = /^\d+(\.\d+)?$/
-
-    // if ((!regexSpecial.test(req.query.name)) && (regexNumber.test(req.query.age))) {
-    //     next()
-    // } else {
-    //     res.status(400).send('Invalid data');
-    // }
-
     const regexSpecial = /^[a-zA-Z0-9]+$/;
     const regexNumber = /^\d+(\.\d+)?$/;
 

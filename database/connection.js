@@ -1,11 +1,18 @@
 const mysql = require('mysql');
+require('dotenv').config({ path: '.env' })
+
+console.log(process.env.DB_HOST)
+console.log(process.env.DB_USER)
+console.log(process.env.DB_PW)
+console.log(process.env.DB_NAME)
+
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'Ngoctram123',
-    database: 'user-management'
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
+    database: process.env.DB_NAME
 })
 
 connection.connect((err) => {
