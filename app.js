@@ -1,14 +1,49 @@
 const jsonwebtoken = require('jsonwebtoken')
 const express = require('express')
+require('dotenv').config({ path: '.env' })
 const app = express()
-const SECRET = 'secret'
+const SECRET = process.env.SECRET
+const crypto = require('crypto')
+
+const {
+    publicKey,
+    privateKey,
+} = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 })
+
+// encrypt data with public key
+function encrypt(plainText) {
+
+    const encrypted = crypto.publicEncrypt(
+        {
+            key: publicKey,
+            padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+            oaepHash: "sha256",
+        },
+        Buffer.from(plainText)
+    )
+
+    // Return: Base64 encoded encrypted text
+    return encrypted.toString("base64");
+}
+
+// decrypt data with private key
+function decrypt(cipherText) {
+    const plainText = crypto.privateDecrypt({
+        key: privateKey,
+        padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+        oaepHash: 'sha256'
+    },
+        Buffer.from(cipherText, 'base64'))
+    return plainText.toString()
+}
+
 
 const db = [
     {
         username: 'jasmine',
         age: 22,
         email: 'jasmine@gmail.com',
-        password: 'jasmine123',
+        password: encrypt('jasmine123'),
         balance: 99999999
     },
 
@@ -16,7 +51,7 @@ const db = [
         username: 'tram',
         age: 20,
         email: 'tram@gmail.com',
-        password: 'tramqwe',
+        password: encrypt('tramqwe'),
         balance: 55555555
     }
 ]
@@ -42,7 +77,7 @@ app.post('/users/login', (req, res, next) => {
             email: user.email,
             age: user.age
         }, SECRET, {
-            algorithm: 'HS256',
+            algorithm: 'RS256',
             expiresIn: '1h'
         })
 
